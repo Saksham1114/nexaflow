@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-class TasksPage extends StatelessWidget {
-  const TasksPage({super.key});
+class AIPage extends StatelessWidget {
+  const AIPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
         child: Text(
-          'Tasks',
+          'AI',
           style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
         ),
       ),

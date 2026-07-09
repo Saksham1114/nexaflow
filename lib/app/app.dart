@@ -8,12 +8,13 @@ class NexaFlowApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
+      title: 'NexaFlow',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.dark,
-      home: const Scaffold(body: Center(child: Text("NexaFlow"))),
+      routerConfig: AppRouter.router,
     );
   }
 }

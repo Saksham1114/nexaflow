@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-class TasksPage extends StatelessWidget {
-  const TasksPage({super.key});
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
         child: Text(
-          'Tasks',
+          'Home',
           style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
         ),
       ),
