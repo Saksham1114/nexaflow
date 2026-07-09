@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:nexaflow/shared/widgets/dashboard_card.dart';
 import 'package:nexaflow/shared/widgets/section_title.dart';
 
@@ -8,6 +7,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -15,46 +16,38 @@ class HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Good Evening 👋',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
+              Text("Good Evening 👋", style: theme.textTheme.headlineMedium),
               const SizedBox(height: 8),
               Text(
-                'Welcome back to NexaFlow',
-                style: Theme.of(context).textTheme.bodyMedium,
+                "Welcome back to NexaFlow",
+                style: theme.textTheme.bodyMedium,
               ),
               const SizedBox(height: 32),
 
-              const SectionTitle('Today'),
+              const SectionTitle("Today's Progress"),
 
               DashboardCard(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Productivity',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
+                    Text("Productivity", style: theme.textTheme.titleLarge),
                     const SizedBox(height: 20),
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(100),
+                      borderRadius: BorderRadius.circular(20),
                       child: const LinearProgressIndicator(
                         value: .72,
-                        minHeight: 12,
+                        minHeight: 10,
                       ),
                     ),
                     const SizedBox(height: 20),
-                    Text(
-                      '72% Complete',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
+                    Text("72% Complete", style: theme.textTheme.titleMedium),
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
 
-              const SectionTitle('Quick Actions'),
+              const SizedBox(height: 30),
+
+              const SectionTitle("Quick Actions"),
 
               Row(
                 children: [
@@ -62,7 +55,7 @@ class HomePage extends StatelessWidget {
                     child: FilledButton.icon(
                       onPressed: () {},
                       icon: const Icon(Icons.add),
-                      label: const Text("Task"),
+                      label: const Text("New Task"),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -70,10 +63,31 @@ class HomePage extends StatelessWidget {
                     child: FilledButton.icon(
                       onPressed: () {},
                       icon: const Icon(Icons.auto_awesome),
-                      label: const Text("AI"),
+                      label: const Text("Ask AI"),
                     ),
                   ),
                 ],
+              ),
+
+              const SizedBox(height: 30),
+
+              const SectionTitle("Today's Tasks"),
+
+              const DashboardCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "5 Tasks Pending",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text("Let's make today productive 🚀"),
+                  ],
+                ),
               ),
             ],
           ),
