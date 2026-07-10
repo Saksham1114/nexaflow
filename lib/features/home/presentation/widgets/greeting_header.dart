@@ -35,7 +35,7 @@ class GreetingHeader extends StatelessWidget {
           height: 52,
           width: 52,
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary.withOpacity(.15),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: .15),
             borderRadius: BorderRadius.circular(16),
           ),
           child: const Icon(Icons.person),
