@@ -4,6 +4,7 @@ import '../../models/task.dart';
 import '../widgets/add_task_bottom_sheet.dart';
 import '../widgets/task_card.dart';
 import '../widgets/task_filter_chip.dart';
+import '../widgets/task_search_bar.dart';
 
 enum TaskFilter { all, pending, completed }
 
@@ -42,19 +43,43 @@ class _TasksPageState extends State<TasksPage> {
     ),
   ];
 
+  final TextEditingController _searchController = TextEditingController();
+
   TaskFilter _filter = TaskFilter.all;
+  String _searchQuery = "";
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   List<Task> get filteredTasks {
+    List<Task> result;
+
     switch (_filter) {
       case TaskFilter.pending:
-        return _tasks.where((task) => !task.isCompleted).toList();
+        result = _tasks.where((task) => !task.isCompleted).toList();
+        break;
 
       case TaskFilter.completed:
-        return _tasks.where((task) => task.isCompleted).toList();
+        result = _tasks.where((task) => task.isCompleted).toList();
+        break;
 
       case TaskFilter.all:
-        return _tasks;
+        result = List.from(_tasks);
     }
+
+    if (_searchQuery.isNotEmpty) {
+      final query = _searchQuery.toLowerCase();
+
+      result = result.where((task) {
+        return task.title.toLowerCase().contains(query) ||
+            task.description.toLowerCase().contains(query);
+      }).toList();
+    }
+
+    return result;
   }
 
   Future<void> _addTask() async {
@@ -118,7 +143,14 @@ class _TasksPageState extends State<TasksPage> {
       ),
       body: Column(
         children: [
-          const SizedBox(height: 12),
+          TaskSearchBar(
+            controller: _searchController,
+            onChanged: (value) {
+              setState(() {
+                _searchQuery = value;
+              });
+            },
+          ),
 
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -128,29 +160,19 @@ class _TasksPageState extends State<TasksPage> {
                 TaskFilterChip(
                   label: "All",
                   selected: _filter == TaskFilter.all,
-                  onTap: () {
-                    setState(() => _filter = TaskFilter.all);
-                  },
+                  onTap: () => setState(() => _filter = TaskFilter.all),
                 ),
-
                 const SizedBox(width: 12),
-
                 TaskFilterChip(
                   label: "Pending",
                   selected: _filter == TaskFilter.pending,
-                  onTap: () {
-                    setState(() => _filter = TaskFilter.pending);
-                  },
+                  onTap: () => setState(() => _filter = TaskFilter.pending),
                 ),
-
                 const SizedBox(width: 12),
-
                 TaskFilterChip(
                   label: "Completed",
                   selected: _filter == TaskFilter.completed,
-                  onTap: () {
-                    setState(() => _filter = TaskFilter.completed);
-                  },
+                  onTap: () => setState(() => _filter = TaskFilter.completed),
                 ),
               ],
             ),
