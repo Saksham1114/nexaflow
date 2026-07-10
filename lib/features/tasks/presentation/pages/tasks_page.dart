@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import '../../models/task.dart';
 import '../widgets/add_task_bottom_sheet.dart';
 import '../widgets/task_card.dart';
+import '../widgets/task_filter_chip.dart';
+
+enum TaskFilter { all, pending, completed }
 
 class TasksPage extends StatefulWidget {
   const TasksPage({super.key});
@@ -38,6 +41,21 @@ class _TasksPageState extends State<TasksPage> {
       createdAt: DateTime.now(),
     ),
   ];
+
+  TaskFilter _filter = TaskFilter.all;
+
+  List<Task> get filteredTasks {
+    switch (_filter) {
+      case TaskFilter.pending:
+        return _tasks.where((task) => !task.isCompleted).toList();
+
+      case TaskFilter.completed:
+        return _tasks.where((task) => task.isCompleted).toList();
+
+      case TaskFilter.all:
+        return _tasks;
+    }
+  }
 
   Future<void> _addTask() async {
     final Task? task = await showModalBottomSheet<Task>(
@@ -98,26 +116,75 @@ class _TasksPageState extends State<TasksPage> {
         icon: const Icon(Icons.add),
         label: const Text("Task"),
       ),
-      body: _tasks.isEmpty
-          ? const Center(
-              child: Text(
-                "No Tasks Yet",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-              ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(20),
-              itemCount: _tasks.length,
-              itemBuilder: (context, index) {
-                final task = _tasks[index];
+      body: Column(
+        children: [
+          const SizedBox(height: 12),
 
-                return TaskCard(
-                  task: task,
-                  onToggle: () => _toggleTask(task),
-                  onDelete: () => _deleteTask(task),
-                );
-              },
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              children: [
+                TaskFilterChip(
+                  label: "All",
+                  selected: _filter == TaskFilter.all,
+                  onTap: () {
+                    setState(() => _filter = TaskFilter.all);
+                  },
+                ),
+
+                const SizedBox(width: 12),
+
+                TaskFilterChip(
+                  label: "Pending",
+                  selected: _filter == TaskFilter.pending,
+                  onTap: () {
+                    setState(() => _filter = TaskFilter.pending);
+                  },
+                ),
+
+                const SizedBox(width: 12),
+
+                TaskFilterChip(
+                  label: "Completed",
+                  selected: _filter == TaskFilter.completed,
+                  onTap: () {
+                    setState(() => _filter = TaskFilter.completed);
+                  },
+                ),
+              ],
             ),
+          ),
+
+          const SizedBox(height: 10),
+
+          Expanded(
+            child: filteredTasks.isEmpty
+                ? const Center(
+                    child: Text(
+                      "No Tasks Found",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.all(20),
+                    itemCount: filteredTasks.length,
+                    itemBuilder: (context, index) {
+                      final task = filteredTasks[index];
+
+                      return TaskCard(
+                        task: task,
+                        onToggle: () => _toggleTask(task),
+                        onDelete: () => _deleteTask(task),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
     );
   }
 }
