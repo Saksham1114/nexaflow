@@ -55,6 +55,40 @@ class _TasksPageState extends State<TasksPage> {
     });
   }
 
+  void _toggleTask(Task task) {
+    final index = _tasks.indexWhere((e) => e.id == task.id);
+
+    if (index == -1) return;
+
+    setState(() {
+      _tasks[index] = task.copyWith(isCompleted: !task.isCompleted);
+    });
+  }
+
+  void _deleteTask(Task task) {
+    final index = _tasks.indexWhere((e) => e.id == task.id);
+
+    if (index == -1) return;
+
+    setState(() {
+      _tasks.removeAt(index);
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text("Task deleted"),
+        action: SnackBarAction(
+          label: "UNDO",
+          onPressed: () {
+            setState(() {
+              _tasks.insert(index, task);
+            });
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,7 +109,13 @@ class _TasksPageState extends State<TasksPage> {
               padding: const EdgeInsets.all(20),
               itemCount: _tasks.length,
               itemBuilder: (context, index) {
-                return TaskCard(task: _tasks[index]);
+                final task = _tasks[index];
+
+                return TaskCard(
+                  task: task,
+                  onToggle: () => _toggleTask(task),
+                  onDelete: () => _deleteTask(task),
+                );
               },
             ),
     );
