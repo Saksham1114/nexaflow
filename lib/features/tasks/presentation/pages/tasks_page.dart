@@ -5,6 +5,7 @@ import '../widgets/add_task_bottom_sheet.dart';
 import '../widgets/task_card.dart';
 import '../widgets/task_filter_chip.dart';
 import '../widgets/task_search_bar.dart';
+import '../widgets/task_statistics_card.dart';
 
 enum TaskFilter { all, pending, completed }
 
@@ -42,6 +43,11 @@ class _TasksPageState extends State<TasksPage> {
       createdAt: DateTime.now(),
     ),
   ];
+  int get totalTasks => _tasks.length;
+
+  int get completedTasks => _tasks.where((task) => task.isCompleted).length;
+
+  int get pendingTasks => _tasks.where((task) => !task.isCompleted).length;
 
   final TextEditingController _searchController = TextEditingController();
 
@@ -151,6 +157,11 @@ class _TasksPageState extends State<TasksPage> {
               });
             },
           ),
+          TaskStatisticsCard(
+            total: totalTasks,
+            pending: pendingTasks,
+            completed: completedTasks,
+          ),
 
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -177,8 +188,6 @@ class _TasksPageState extends State<TasksPage> {
               ],
             ),
           ),
-
-          const SizedBox(height: 10),
 
           Expanded(
             child: filteredTasks.isEmpty
