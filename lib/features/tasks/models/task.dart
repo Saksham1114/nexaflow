@@ -10,6 +10,13 @@ class Task {
     required this.createdAt,
     this.dueDate,
   });
+  bool get hasDueDate => dueDate != null;
+
+  bool get isOverdue {
+    if (dueDate == null) return false;
+
+    return !isCompleted && dueDate!.isBefore(DateTime.now());
+  }
 
   final String id;
   final String title;

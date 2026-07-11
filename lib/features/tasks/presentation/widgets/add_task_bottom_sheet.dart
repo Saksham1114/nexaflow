@@ -14,12 +14,28 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   final _descriptionController = TextEditingController();
 
   TaskPriority _priority = TaskPriority.medium;
+  DateTime? _dueDate;
 
   @override
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickDueDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+      initialDate: _dueDate ?? DateTime.now(),
+    );
+
+    if (picked == null) return;
+
+    setState(() {
+      _dueDate = picked;
+    });
   }
 
   void _saveTask() {
@@ -34,6 +50,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
         priority: _priority,
         isCompleted: false,
         createdAt: DateTime.now(),
+        dueDate: _dueDate,
       ),
     );
   }
@@ -51,16 +68,19 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
                 "Create Task",
                 style: Theme.of(context).textTheme.headlineSmall,
+                textAlign: TextAlign.center,
               ),
 
               const SizedBox(height: 24),
 
               TextField(
                 controller: _titleController,
+                textInputAction: TextInputAction.next,
                 decoration: const InputDecoration(
                   labelText: "Task Title",
                   border: OutlineInputBorder(),
@@ -87,21 +107,36 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                   border: OutlineInputBorder(),
                 ),
                 items: TaskPriority.values.map((priority) {
-                  return DropdownMenuItem(
+                  return DropdownMenuItem<TaskPriority>(
                     value: priority,
                     child: Text(priority.name.toUpperCase()),
                   );
                 }).toList(),
                 onChanged: (value) {
                   if (value == null) return;
-                  setState(() => _priority = value);
+
+                  setState(() {
+                    _priority = value;
+                  });
                 },
+              ),
+
+              const SizedBox(height: 20),
+
+              OutlinedButton.icon(
+                onPressed: _pickDueDate,
+                icon: const Icon(Icons.calendar_month),
+                label: Text(
+                  _dueDate == null
+                      ? "Select Due Date"
+                      : "${_dueDate!.day}/${_dueDate!.month}/${_dueDate!.year}",
+                ),
               ),
 
               const SizedBox(height: 24),
 
               SizedBox(
-                width: double.infinity,
+                height: 52,
                 child: FilledButton.icon(
                   onPressed: _saveTask,
                   icon: const Icon(Icons.check),

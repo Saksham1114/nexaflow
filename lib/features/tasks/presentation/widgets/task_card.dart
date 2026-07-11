@@ -72,13 +72,19 @@ class TaskCard extends StatelessWidget {
 
                         const Spacer(),
 
-                        if (task.dueDate != null)
+                        if (task.hasDueDate)
                           Row(
                             children: [
                               const Icon(Icons.schedule, size: 16),
                               const SizedBox(width: 4),
                               Text(
                                 "${task.dueDate!.day}/${task.dueDate!.month}",
+                                style: TextStyle(
+                                  color: task.isOverdue ? Colors.red : null,
+                                  fontWeight: task.isOverdue
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                ),
                               ),
                             ],
                           ),
