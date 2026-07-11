@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../providers/dashboard_provider.dart';
 import '../widgets/daily_quote_card.dart';
 import '../widgets/greeting_card.dart';
 import '../widgets/overview_stat_card.dart';
@@ -8,26 +10,28 @@ import '../widgets/progress_overview_card.dart';
 import '../widgets/quick_actions_card.dart';
 import '../widgets/section_title.dart';
 
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends ConsumerWidget {
   const DashboardPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final stats = ref.watch(dashboardStatsProvider);
+
     return Scaffold(
       appBar: AppBar(title: const Text("NexaFlow")),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            GreetingCard(),
+            const GreetingCard(),
 
             const SizedBox(height: 20),
 
-            SectionTitle(title: "Overview"),
+            const SectionTitle(title: "Overview"),
 
             const SizedBox(height: 16),
 
-            ProgressOverviewCard(),
+            const ProgressOverviewCard(),
 
             const SizedBox(height: 20),
 
@@ -36,17 +40,19 @@ class DashboardPage extends StatelessWidget {
                 Expanded(
                   child: OverviewStatCard(
                     title: "Tasks",
-                    value: "7",
+                    value: "${stats.completedTasks}/${stats.totalTasks}",
                     subtitle: "Completed",
                     icon: Icons.task_alt,
                     iconColor: Colors.blue,
                   ),
                 ),
+
                 const SizedBox(width: 16),
+
                 Expanded(
                   child: OverviewStatCard(
                     title: "Water",
-                    value: "2.5L",
+                    value: "${stats.totalWater} ml",
                     subtitle: "Today",
                     icon: Icons.water_drop,
                     iconColor: Colors.cyan,
@@ -57,15 +63,15 @@ class DashboardPage extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            ProductivityScoreCard(),
+            ProductivityScoreCard(progress: stats.productivity),
 
             const SizedBox(height: 20),
 
-            QuickActionsCard(),
+            const QuickActionsCard(),
 
             const SizedBox(height: 20),
 
-            DailyQuoteCard(),
+            const DailyQuoteCard(),
           ],
         ),
       ),

@@ -28,15 +28,28 @@ class OverviewStatCard extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 22,
-            backgroundColor: iconColor.withValues(alpha: 0.15),
+            backgroundColor: iconColor.withValues(alpha: .15),
             child: Icon(icon, color: iconColor),
           ),
+
           const SizedBox(height: 18),
+
           Text(title, style: theme.textTheme.bodyMedium),
+
           const SizedBox(height: 6),
-          Text(value, style: theme.textTheme.headlineMedium),
+
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child: Text(
+              value,
+              key: ValueKey(value),
+              style: theme.textTheme.headlineMedium,
+            ),
+          ),
+
           const SizedBox(height: 4),
-          Text(subtitle, style: theme.textTheme.bodySmall),
+
+          Text(subtitle),
         ],
       ),
     );

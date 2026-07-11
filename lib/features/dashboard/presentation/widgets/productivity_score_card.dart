@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 import '../../../../shared/widgets/dashboard_card.dart';
 
 class ProductivityScoreCard extends StatelessWidget {
-  const ProductivityScoreCard({super.key});
+  const ProductivityScoreCard({super.key, required this.progress});
+
+  final double progress;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    final percent = (progress * 100).round();
 
     return DashboardCard(
       child: Column(
@@ -19,17 +23,15 @@ class ProductivityScoreCard extends StatelessWidget {
 
           ClipRRect(
             borderRadius: BorderRadius.circular(30),
-            child: const LinearProgressIndicator(value: .72, minHeight: 12),
+            child: LinearProgressIndicator(value: progress, minHeight: 12),
           ),
 
           const SizedBox(height: 20),
 
           Row(
             children: [
-              Text("72%", style: theme.textTheme.headlineMedium),
-
+              Text("$percent%", style: theme.textTheme.headlineMedium),
               const Spacer(),
-
               const Icon(Icons.trending_up, color: Colors.green),
             ],
           ),
