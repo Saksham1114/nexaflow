@@ -7,17 +7,18 @@ import '../widgets/task_filter_chip.dart';
 import '../widgets/task_search_bar.dart';
 import '../widgets/task_statistics_card.dart';
 import 'task_details_page.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum TaskFilter { all, pending, completed }
 
-class TasksPage extends StatefulWidget {
+class TasksPage extends ConsumerStatefulWidget {
   const TasksPage({super.key});
 
   @override
-  State<TasksPage> createState() => _TasksPageState();
+  ConsumerState<TasksPage> createState() => _TasksPageState();
 }
 
-class _TasksPageState extends State<TasksPage> {
+class _TasksPageState extends ConsumerState<TasksPage> {
   final List<Task> _tasks = [
     Task(
       id: '1',
