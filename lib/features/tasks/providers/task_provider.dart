@@ -36,7 +36,7 @@ class TaskNotifier extends StateNotifier<List<Task>> {
 final taskProvider = StateNotifierProvider<TaskNotifier, List<Task>>((ref) {
   final repository = ref.watch(taskRepositoryProvider);
 
-  final notifier = TaskNotifier(repository);
+  final notifier = TaskNotifier(repository as TaskRepository);
 
   notifier.loadTasks();
 
