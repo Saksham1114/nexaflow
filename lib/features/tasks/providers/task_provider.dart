@@ -1,59 +1,44 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/task.dart';
+import '../repositories/task_repository.dart';
+import '../../../core/di/service_locator.dart';
 
 class TaskNotifier extends StateNotifier<List<Task>> {
-  TaskNotifier()
-    : super([
-        Task(
-          id: '1',
-          title: 'Finish NexaFlow Dashboard',
-          description: 'Complete Sprint 2 Task Module',
-          priority: TaskPriority.high,
-          isCompleted: false,
-          createdAt: DateTime.now(),
-        ),
-        Task(
-          id: '2',
-          title: 'Workout',
-          description: 'Chest & Triceps',
-          priority: TaskPriority.medium,
-          isCompleted: false,
-          createdAt: DateTime.now(),
-        ),
-        Task(
-          id: '3',
-          title: 'Drink Water',
-          description: 'Complete 4L today',
-          priority: TaskPriority.low,
-          isCompleted: true,
-          createdAt: DateTime.now(),
-        ),
-      ]);
+  TaskNotifier(this._repository) : super([]);
 
-  void add(Task task) {
-    state = [task, ...state];
+  final TaskRepository _repository;
+
+  Future<void> loadTasks() async {
+    state = await _repository.getTasks();
   }
 
-  void delete(String id) {
-    state = state.where((task) => task.id != id).toList();
+  Future<void> add(Task task) async {
+    await _repository.addTask(task);
+    await loadTasks();
   }
 
-  void update(Task task) {
-    state = [
-      for (final t in state)
-        if (t.id == task.id) task else t,
-    ];
+  Future<void> update(Task task) async {
+    await _repository.updateTask(task);
+    await loadTasks();
   }
 
-  void toggle(String id) {
-    state = [
-      for (final t in state)
-        if (t.id == id) t.copyWith(isCompleted: !t.isCompleted) else t,
-    ];
+  Future<void> delete(String id) async {
+    await _repository.deleteTask(id);
+    await loadTasks();
+  }
+
+  Future<void> toggle(Task task) async {
+    await update(task.copyWith(isCompleted: !task.isCompleted));
   }
 }
 
-final taskProvider = StateNotifierProvider<TaskNotifier, List<Task>>(
-  (ref) => TaskNotifier(),
-);
+final taskProvider = StateNotifierProvider<TaskNotifier, List<Task>>((ref) {
+  final repository = ref.watch(taskRepositoryProvider);
+
+  final notifier = TaskNotifier(repository);
+
+  notifier.loadTasks();
+
+  return notifier;
+});
