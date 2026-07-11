@@ -9,7 +9,10 @@ class TaskCard extends StatelessWidget {
     required this.task,
     required this.onToggle,
     required this.onDelete,
+    required this.onTap,
   });
+
+  final VoidCallback onTap;
 
   final Task task;
   final VoidCallback onToggle;
@@ -32,68 +35,74 @@ class TaskCard extends StatelessWidget {
         ),
         child: const Icon(Icons.delete, color: Colors.white),
       ),
-      child: Card(
-        margin: const EdgeInsets.only(bottom: 16),
-        elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
-        child: Padding(
-          padding: const EdgeInsets.all(18),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Checkbox(value: task.isCompleted, onChanged: (_) => onToggle()),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(22),
+        onTap: onTap,
+        child: Card(
+          margin: const EdgeInsets.only(bottom: 16),
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(18),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Checkbox(value: task.isCompleted, onChanged: (_) => onToggle()),
 
-              const SizedBox(width: 12),
+                const SizedBox(width: 12),
 
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AnimatedDefaultTextStyle(
-                      duration: const Duration(milliseconds: 250),
-                      style: theme.textTheme.titleMedium!.copyWith(
-                        decoration: task.isCompleted
-                            ? TextDecoration.lineThrough
-                            : null,
-                        color: task.isCompleted ? Colors.grey : Colors.white,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AnimatedDefaultTextStyle(
+                        duration: const Duration(milliseconds: 250),
+                        style: theme.textTheme.titleMedium!.copyWith(
+                          decoration: task.isCompleted
+                              ? TextDecoration.lineThrough
+                              : null,
+                          color: task.isCompleted ? Colors.grey : Colors.white,
+                        ),
+                        child: Text(task.title),
                       ),
-                      child: Text(task.title),
-                    ),
 
-                    const SizedBox(height: 6),
+                      const SizedBox(height: 6),
 
-                    Text(task.description, style: theme.textTheme.bodyMedium),
+                      Text(task.description, style: theme.textTheme.bodyMedium),
 
-                    const SizedBox(height: 14),
+                      const SizedBox(height: 14),
 
-                    Row(
-                      children: [
-                        TaskPriorityChip(priority: task.priority),
+                      Row(
+                        children: [
+                          TaskPriorityChip(priority: task.priority),
 
-                        const Spacer(),
+                          const Spacer(),
 
-                        if (task.hasDueDate)
-                          Row(
-                            children: [
-                              const Icon(Icons.schedule, size: 16),
-                              const SizedBox(width: 4),
-                              Text(
-                                "${task.dueDate!.day}/${task.dueDate!.month}",
-                                style: TextStyle(
-                                  color: task.isOverdue ? Colors.red : null,
-                                  fontWeight: task.isOverdue
-                                      ? FontWeight.bold
-                                      : FontWeight.normal,
+                          if (task.hasDueDate)
+                            Row(
+                              children: [
+                                const Icon(Icons.schedule, size: 16),
+                                const SizedBox(width: 4),
+                                Text(
+                                  "${task.dueDate!.day}/${task.dueDate!.month}",
+                                  style: TextStyle(
+                                    color: task.isOverdue ? Colors.red : null,
+                                    fontWeight: task.isOverdue
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                      ],
-                    ),
-                  ],
+                              ],
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

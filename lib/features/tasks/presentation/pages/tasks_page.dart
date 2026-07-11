@@ -6,6 +6,7 @@ import '../widgets/task_card.dart';
 import '../widgets/task_filter_chip.dart';
 import '../widgets/task_search_bar.dart';
 import '../widgets/task_statistics_card.dart';
+import 'task_details_page.dart';
 
 enum TaskFilter { all, pending, completed }
 
@@ -43,6 +44,23 @@ class _TasksPageState extends State<TasksPage> {
       createdAt: DateTime.now(),
     ),
   ];
+  Future<void> _openTask(Task task) async {
+    final Task? updatedTask = await Navigator.push<Task>(
+      context,
+      MaterialPageRoute(builder: (_) => TaskDetailsPage(task: task)),
+    );
+
+    if (updatedTask == null) return;
+
+    final index = _tasks.indexWhere((e) => e.id == updatedTask.id);
+
+    if (index == -1) return;
+
+    setState(() {
+      _tasks[index] = updatedTask;
+    });
+  }
+
   int get totalTasks => _tasks.length;
 
   int get completedTasks => _tasks.where((task) => task.isCompleted).length;
@@ -210,6 +228,7 @@ class _TasksPageState extends State<TasksPage> {
                         task: task,
                         onToggle: () => _toggleTask(task),
                         onDelete: () => _deleteTask(task),
+                        onTap: () => _openTask(task),
                       );
                     },
                   ),
