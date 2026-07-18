@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/task.dart';
+import '../../models/task_category.dart';
 
 class AddTaskBottomSheet extends StatefulWidget {
   const AddTaskBottomSheet({super.key});
@@ -14,6 +15,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   final _descriptionController = TextEditingController();
 
   TaskPriority _priority = TaskPriority.medium;
+  TaskCategory _category = TaskCategory.personal;
   DateTime? _dueDate;
 
   @override
@@ -48,6 +50,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
         title: _titleController.text.trim(),
         description: _descriptionController.text.trim(),
         priority: _priority,
+        category: _category,
         isCompleted: false,
         createdAt: DateTime.now(),
         dueDate: _dueDate,
@@ -72,8 +75,8 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
             children: [
               Text(
                 "Create Task",
-                style: Theme.of(context).textTheme.headlineSmall,
                 textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headlineSmall,
               ),
 
               const SizedBox(height: 24),
@@ -117,6 +120,29 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
 
                   setState(() {
                     _priority = value;
+                  });
+                },
+              ),
+
+              const SizedBox(height: 16),
+
+              DropdownButtonFormField<TaskCategory>(
+                initialValue: _category,
+                decoration: const InputDecoration(
+                  labelText: "Category",
+                  border: OutlineInputBorder(),
+                ),
+                items: TaskCategory.values.map((category) {
+                  return DropdownMenuItem<TaskCategory>(
+                    value: category,
+                    child: Text(category.title),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  if (value == null) return;
+
+                  setState(() {
+                    _category = value;
                   });
                 },
               ),

@@ -1,4 +1,5 @@
 import '../models/task.dart';
+import '../models/task_category.dart';
 import 'task_repository.dart';
 
 class InMemoryTaskRepository implements TaskRepository {
@@ -8,6 +9,7 @@ class InMemoryTaskRepository implements TaskRepository {
       title: 'Finish NexaFlow Dashboard',
       description: 'Complete Sprint 2 Task Module',
       priority: TaskPriority.high,
+      category: TaskCategory.work,
       isCompleted: false,
       createdAt: DateTime.now(),
     ),
@@ -16,6 +18,7 @@ class InMemoryTaskRepository implements TaskRepository {
       title: 'Workout',
       description: 'Chest & Triceps',
       priority: TaskPriority.medium,
+      category: TaskCategory.health,
       isCompleted: false,
       createdAt: DateTime.now(),
     ),
@@ -24,6 +27,7 @@ class InMemoryTaskRepository implements TaskRepository {
       title: 'Drink Water',
       description: 'Complete 4L today',
       priority: TaskPriority.low,
+      category: TaskCategory.health,
       isCompleted: true,
       createdAt: DateTime.now(),
     ),

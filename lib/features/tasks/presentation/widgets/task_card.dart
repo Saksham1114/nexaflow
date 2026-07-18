@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/task.dart';
 import 'task_priority_chip.dart';
+import 'task_category_chip.dart';
 
 class TaskCard extends StatelessWidget {
   const TaskCard({
@@ -78,6 +79,10 @@ class TaskCard extends StatelessWidget {
                         children: [
                           TaskPriorityChip(priority: task.priority),
 
+                          const SizedBox(width: 8),
+
+                          TaskCategoryChip(category: task.category),
+
                           const Spacer(),
 
                           if (task.hasDueDate)
@@ -87,12 +92,6 @@ class TaskCard extends StatelessWidget {
                                 const SizedBox(width: 4),
                                 Text(
                                   "${task.dueDate!.day}/${task.dueDate!.month}",
-                                  style: TextStyle(
-                                    color: task.isOverdue ? Colors.red : null,
-                                    fontWeight: task.isOverdue
-                                        ? FontWeight.bold
-                                        : FontWeight.normal,
-                                  ),
                                 ),
                               ],
                             ),
