@@ -5,12 +5,24 @@ import 'package:nexaflow/features/home/presentation/widgets/productivity_card.da
 import 'package:nexaflow/features/home/presentation/widgets/quick_action_card.dart';
 import 'package:nexaflow/features/home/presentation/widgets/stat_card.dart';
 import 'package:nexaflow/shared/widgets/section_title.dart';
+import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class HomePage extends StatelessWidget {
+import '../../../tasks/providers/task_provider.dart';
+import '../widgets/recent_task_tile.dart';
+
+class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tasks = ref.watch(taskProvider);
+
+    final recentTasks = tasks
+        .where((task) => !task.isCompleted)
+        .take(3)
+        .toList();
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -33,24 +45,30 @@ class HomePage extends StatelessWidget {
               Row(
                 children: [
                   QuickActionCard(
-                    title: "Task",
+                    title: "Tasks",
                     icon: Icons.add_task_rounded,
                     color: Colors.blue,
-                    onTap: () {},
+                    onTap: () => context.go('/tasks'),
                   ),
                   const SizedBox(width: 16),
                   QuickActionCard(
                     title: "AI",
                     icon: Icons.auto_awesome,
                     color: Colors.deepPurple,
-                    onTap: () {},
+                    onTap: () => context.go('/ai'),
                   ),
                   const SizedBox(width: 16),
                   QuickActionCard(
                     title: "Water",
                     icon: Icons.water_drop,
                     color: Colors.cyan,
-                    onTap: () {},
+                    onTap: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Water tracker will be added soon."),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -100,6 +118,32 @@ class HomePage extends StatelessWidget {
                   ),
                 ],
               ),
+
+              const SizedBox(height: 32),
+
+              const SectionTitle("Recent Tasks"),
+
+              const SizedBox(height: 16),
+
+              if (recentTasks.isEmpty)
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Center(
+                      child: Text(
+                        "No pending tasks 🎉",
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                    ),
+                  ),
+                )
+              else
+                ...recentTasks.map(
+                  (task) => RecentTaskTile(
+                    task: task,
+                    onTap: () => context.go('/tasks'),
+                  ),
+                ),
 
               const SizedBox(height: 32),
             ],

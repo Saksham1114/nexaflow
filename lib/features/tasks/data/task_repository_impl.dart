@@ -1,4 +1,4 @@
-import '../domain/task_repository.dart';
+import '../repositories/task_repository.dart';
 import '../models/task.dart';
 import '../models/task_category.dart';
 
