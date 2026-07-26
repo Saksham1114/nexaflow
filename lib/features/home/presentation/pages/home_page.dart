@@ -7,6 +7,7 @@ import 'package:nexaflow/features/home/presentation/widgets/stat_card.dart';
 import 'package:nexaflow/shared/widgets/section_title.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../dashboard/providers/dashboard_provider.dart';
 
 import '../../../tasks/providers/task_provider.dart';
 import '../widgets/recent_task_tile.dart';
@@ -17,6 +18,7 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tasks = ref.watch(taskProvider);
+    final stats = ref.watch(dashboardStatsProvider);
 
     final recentTasks = tasks
         .where((task) => !task.isCompleted)
@@ -78,19 +80,19 @@ class HomePage extends ConsumerWidget {
               const SectionTitle("Today's Overview"),
 
               Row(
-                children: const [
+                children: [
                   StatCard(
                     title: "Tasks",
-                    value: "5",
-                    subtitle: "Pending",
+                    value: "${stats.completedTasks}/${stats.totalTasks}",
+                    subtitle: "Completed",
                     icon: Icons.check_circle,
                     iconColor: Colors.green,
                   ),
                   SizedBox(width: 16),
                   StatCard(
                     title: "Water",
-                    value: "2.4L",
-                    subtitle: "of 4L",
+                    value: "${(stats.totalWater / 1000).toStringAsFixed(1)}L",
+                    subtitle: "Today",
                     icon: Icons.water_drop,
                     iconColor: Colors.cyan,
                   ),
@@ -100,10 +102,10 @@ class HomePage extends ConsumerWidget {
               const SizedBox(height: 16),
 
               Row(
-                children: const [
+                children: [
                   StatCard(
                     title: "Habits",
-                    value: "4/5",
+                    value: "${stats.completedHabits}/${stats.totalHabits}",
                     subtitle: "Completed",
                     icon: Icons.local_fire_department,
                     iconColor: Colors.orange,
@@ -111,7 +113,7 @@ class HomePage extends ConsumerWidget {
                   SizedBox(width: 16),
                   StatCard(
                     title: "Focus",
-                    value: "91%",
+                    value: "${(stats.productivity * 100).round()}%",
                     subtitle: "Today's Score",
                     icon: Icons.bolt,
                     iconColor: Colors.amber,
