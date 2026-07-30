@@ -11,6 +11,7 @@ import '../../../dashboard/providers/dashboard_provider.dart';
 
 import '../../../tasks/providers/task_provider.dart';
 import '../widgets/recent_task_tile.dart';
+import '../widgets/streak_card.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -33,6 +34,10 @@ class HomePage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const GreetingHeader(),
+
+              const SizedBox(height: 24),
+
+              const StreakCard(currentStreak: 5),
 
               const SizedBox(height: 32),
 
