@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/task.dart';
 import '../repositories/task_repository.dart';
 import '../../../core/di/service_locator.dart';
-import '../models/task_category.dart';
+
 
 class TaskNotifier extends StateNotifier<List<Task>> {
   TaskNotifier(this._repository) : super([]);
@@ -37,7 +37,7 @@ class TaskNotifier extends StateNotifier<List<Task>> {
 final taskProvider = StateNotifierProvider<TaskNotifier, List<Task>>((ref) {
   final repository = ref.watch(taskRepositoryProvider);
 
-  final notifier = TaskNotifier(repository as TaskRepository);
+  final notifier = TaskNotifier(repository);
 
   notifier.loadTasks();
 
