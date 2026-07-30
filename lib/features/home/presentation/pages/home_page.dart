@@ -12,6 +12,8 @@ import '../../../dashboard/providers/dashboard_provider.dart';
 import '../../../tasks/providers/task_provider.dart';
 import '../widgets/recent_task_tile.dart';
 import '../widgets/streak_card.dart';
+import '../../providers/daily_briefing_provider.dart';
+import '../widgets/ai_briefing_card.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -20,6 +22,7 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tasks = ref.watch(taskProvider);
     final stats = ref.watch(dashboardStatsProvider);
+    final briefing = ref.watch(dailyBriefingProvider);
 
     final recentTasks = tasks
         .where((task) => !task.isCompleted)
@@ -38,6 +41,13 @@ class HomePage extends ConsumerWidget {
               const SizedBox(height: 24),
 
               const StreakCard(currentStreak: 5),
+              AIBriefingCard(
+                greeting: briefing.greeting,
+                summary: briefing.summary,
+                recommendation: briefing.recommendation,
+              ),
+
+              const SizedBox(height: 24),
 
               const SizedBox(height: 32),
 
