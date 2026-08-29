@@ -1,4 +1,4 @@
-import '../task_repository.dart';
+import '../../repositories/task_repository.dart';
 import '../../models/task.dart';
 
 class AddTaskUseCase {

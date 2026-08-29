@@ -1,4 +1,4 @@
-import '../task_repository.dart';
+import '../../repositories/task_repository.dart';
 
 class DeleteTaskUseCase {
   const DeleteTaskUseCase(this.repository);

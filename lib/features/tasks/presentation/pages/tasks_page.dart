@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/task.dart';
+import 'package:nexaflow/features/tasks/providers/task_provider.dart';
 import '../widgets/add_task_bottom_sheet.dart';
 import '../widgets/task_card.dart';
 import '../widgets/task_filter_chip.dart';
 import '../widgets/task_search_bar.dart';
 import '../widgets/task_statistics_card.dart';
 import 'task_details_page.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../models/task_category.dart';
 
 enum TaskFilter { all, pending, completed }
 
@@ -20,60 +20,7 @@ class TasksPage extends ConsumerStatefulWidget {
 }
 
 class _TasksPageState extends ConsumerState<TasksPage> {
-  final List<Task> _tasks = [
-    Task(
-      id: '1',
-      title: 'Finish NexaFlow Dashboard',
-      description: 'Complete Sprint 2 Task Module',
-      priority: TaskPriority.high,
-      category: TaskCategory.work,
-      isCompleted: false,
-      createdAt: DateTime.now(),
-    ),
-    Task(
-      id: '2',
-      title: 'Workout',
-      description: 'Chest & Triceps',
-      priority: TaskPriority.medium,
-      category: TaskCategory.health,
-      isCompleted: false,
-      createdAt: DateTime.now(),
-    ),
-    Task(
-      id: '3',
-      title: 'Drink Water',
-      description: 'Complete 4L today',
-      priority: TaskPriority.low,
-      category: TaskCategory.health,
-      isCompleted: true,
-      createdAt: DateTime.now(),
-    ),
-  ];
-  Future<void> _openTask(Task task) async {
-    final Task? updatedTask = await Navigator.push<Task>(
-      context,
-      MaterialPageRoute(builder: (_) => TaskDetailsPage(task: task)),
-    );
-
-    if (updatedTask == null) return;
-
-    final index = _tasks.indexWhere((e) => e.id == updatedTask.id);
-
-    if (index == -1) return;
-
-    setState(() {
-      _tasks[index] = updatedTask;
-    });
-  }
-
-  int get totalTasks => _tasks.length;
-
-  int get completedTasks => _tasks.where((task) => task.isCompleted).length;
-
-  int get pendingTasks => _tasks.where((task) => !task.isCompleted).length;
-
   final TextEditingController _searchController = TextEditingController();
-
   TaskFilter _filter = TaskFilter.all;
   String _searchQuery = "";
 
@@ -83,25 +30,34 @@ class _TasksPageState extends ConsumerState<TasksPage> {
     super.dispose();
   }
 
-  List<Task> get filteredTasks {
+  Future<void> _openTask(Task task) async {
+    final Task? updatedTask = await Navigator.push<Task>(
+      context,
+      MaterialPageRoute(builder: (_) => TaskDetailsPage(task: task)),
+    );
+
+    if (updatedTask == null) return;
+    ref.read(taskProvider.notifier).update(updatedTask);
+  }
+
+  List<Task> _getFilteredTasks(List<Task> allTasks) {
     List<Task> result;
 
     switch (_filter) {
       case TaskFilter.pending:
-        result = _tasks.where((task) => !task.isCompleted).toList();
+        result = allTasks.where((task) => !task.isCompleted).toList();
         break;
 
       case TaskFilter.completed:
-        result = _tasks.where((task) => task.isCompleted).toList();
+        result = allTasks.where((task) => task.isCompleted).toList();
         break;
 
       case TaskFilter.all:
-        result = List.from(_tasks);
+        result = List.from(allTasks);
     }
 
     if (_searchQuery.isNotEmpty) {
       final query = _searchQuery.toLowerCase();
-
       result = result.where((task) {
         return task.title.toLowerCase().contains(query) ||
             task.description.toLowerCase().contains(query);
@@ -121,30 +77,15 @@ class _TasksPageState extends ConsumerState<TasksPage> {
     );
 
     if (task == null) return;
-
-    setState(() {
-      _tasks.insert(0, task);
-    });
+    ref.read(taskProvider.notifier).add(task);
   }
 
   void _toggleTask(Task task) {
-    final index = _tasks.indexWhere((e) => e.id == task.id);
-
-    if (index == -1) return;
-
-    setState(() {
-      _tasks[index] = task.copyWith(isCompleted: !task.isCompleted);
-    });
+    ref.read(taskProvider.notifier).toggle(task);
   }
 
   void _deleteTask(Task task) {
-    final index = _tasks.indexWhere((e) => e.id == task.id);
-
-    if (index == -1) return;
-
-    setState(() {
-      _tasks.removeAt(index);
-    });
+    ref.read(taskProvider.notifier).delete(task.id);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -152,9 +93,7 @@ class _TasksPageState extends ConsumerState<TasksPage> {
         action: SnackBarAction(
           label: "UNDO",
           onPressed: () {
-            setState(() {
-              _tasks.insert(index, task);
-            });
+            ref.read(taskProvider.notifier).add(task);
           },
         ),
       ),
@@ -163,6 +102,12 @@ class _TasksPageState extends ConsumerState<TasksPage> {
 
   @override
   Widget build(BuildContext context) {
+    final tasks = ref.watch(taskProvider);
+    final totalTasks = tasks.length;
+    final completedTasks = tasks.where((task) => task.isCompleted).length;
+    final pendingTasks = tasks.where((task) => !task.isCompleted).length;
+    final filteredTasks = _getFilteredTasks(tasks);
+
     return Scaffold(
       appBar: AppBar(title: const Text("Tasks")),
       floatingActionButton: FloatingActionButton.extended(
@@ -185,7 +130,6 @@ class _TasksPageState extends ConsumerState<TasksPage> {
             pending: pendingTasks,
             completed: completedTasks,
           ),
-
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -211,7 +155,6 @@ class _TasksPageState extends ConsumerState<TasksPage> {
               ],
             ),
           ),
-
           Expanded(
             child: filteredTasks.isEmpty
                 ? const Center(

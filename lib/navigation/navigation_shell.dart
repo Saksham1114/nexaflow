@@ -32,6 +32,16 @@ class AppNavigationShell extends StatelessWidget {
             label: 'Tasks',
           ),
           NavigationDestination(
+            icon: Icon(Icons.local_fire_department_outlined),
+            selectedIcon: Icon(Icons.local_fire_department),
+            label: 'Habits',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.timer_outlined),
+            selectedIcon: Icon(Icons.timer),
+            label: 'Focus',
+          ),
+          NavigationDestination(
             icon: Icon(Icons.auto_awesome_outlined),
             selectedIcon: Icon(Icons.auto_awesome),
             label: 'AI',

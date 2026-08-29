@@ -3,17 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:nexaflow/features/home/presentation/widgets/greeting_header.dart';
 import 'package:nexaflow/features/home/presentation/widgets/productivity_card.dart';
 import 'package:nexaflow/features/home/presentation/widgets/quick_action_card.dart';
-import 'package:nexaflow/features/home/presentation/widgets/stat_card.dart';
 import 'package:nexaflow/shared/widgets/section_title.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../dashboard/providers/dashboard_provider.dart';
-
 import '../../../tasks/providers/task_provider.dart';
 import '../widgets/recent_task_tile.dart';
 import '../widgets/streak_card.dart';
 import '../../providers/daily_briefing_provider.dart';
 import '../widgets/ai_briefing_card.dart';
+import 'package:nexaflow/features/dashboard/presentation/widgets/dashboard_overview_card.dart';
+import 'package:nexaflow/features/dashboard/providers/dashboard_overview_provider.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -21,7 +20,7 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tasks = ref.watch(taskProvider);
-    final stats = ref.watch(dashboardStatsProvider);
+    final overview = ref.watch(dashboardOverviewProvider);
     final briefing = ref.watch(dailyBriefingProvider);
 
     final recentTasks = tasks
@@ -37,27 +36,29 @@ class HomePage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const GreetingHeader(),
-
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
 
               const StreakCard(currentStreak: 5),
+              const SizedBox(height: 16),
+
               AIBriefingCard(
                 greeting: briefing.greeting,
                 summary: briefing.summary,
                 recommendation: briefing.recommendation,
               ),
+              const SizedBox(height: 16),
 
+              DashboardOverviewCard(overview: overview),
               const SizedBox(height: 24),
 
-              const SizedBox(height: 32),
-
               const SectionTitle("Today's Progress"),
+              const SizedBox(height: 12),
+              ProductivityCard(productivity: overview.productivity),
 
-              const ProductivityCard(),
-
-              const SizedBox(height: 32),
+              const SizedBox(height: 28),
 
               const SectionTitle("Quick Actions"),
+              const SizedBox(height: 12),
 
               Row(
                 children: [
@@ -67,80 +68,52 @@ class HomePage extends ConsumerWidget {
                     color: Colors.blue,
                     onTap: () => context.go('/tasks'),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 12),
                   QuickActionCard(
-                    title: "AI",
+                    title: "Habits",
+                    icon: Icons.local_fire_department_rounded,
+                    color: Colors.orange,
+                    onTap: () => context.go('/habits'),
+                  ),
+                  const SizedBox(width: 12),
+                  QuickActionCard(
+                    title: "Focus",
+                    icon: Icons.timer_rounded,
+                    color: Colors.amber,
+                    onTap: () => context.go('/focus'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  QuickActionCard(
+                    title: "AI Chat",
                     icon: Icons.auto_awesome,
                     color: Colors.deepPurple,
                     onTap: () => context.go('/ai'),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 12),
                   QuickActionCard(
                     title: "Water",
                     icon: Icons.water_drop,
                     color: Colors.cyan,
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Water tracker will be added soon."),
-                        ),
-                      );
-                    },
+                    onTap: () => context.push('/water'),
+                  ),
+                  const SizedBox(width: 12),
+                  QuickActionCard(
+                    title: "Settings",
+                    icon: Icons.settings_rounded,
+                    color: Colors.grey,
+                    onTap: () => context.go('/settings'),
                   ),
                 ],
               ),
 
-              const SizedBox(height: 32),
-
-              const SectionTitle("Today's Overview"),
-
-              Row(
-                children: [
-                  StatCard(
-                    title: "Tasks",
-                    value: "${stats.completedTasks}/${stats.totalTasks}",
-                    subtitle: "Completed",
-                    icon: Icons.check_circle,
-                    iconColor: Colors.green,
-                  ),
-                  SizedBox(width: 16),
-                  StatCard(
-                    title: "Water",
-                    value: "${(stats.totalWater / 1000).toStringAsFixed(1)}L",
-                    subtitle: "Today",
-                    icon: Icons.water_drop,
-                    iconColor: Colors.cyan,
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 16),
-
-              Row(
-                children: [
-                  StatCard(
-                    title: "Habits",
-                    value: "${stats.completedHabits}/${stats.totalHabits}",
-                    subtitle: "Completed",
-                    icon: Icons.local_fire_department,
-                    iconColor: Colors.orange,
-                  ),
-                  SizedBox(width: 16),
-                  StatCard(
-                    title: "Focus",
-                    value: "${(stats.productivity * 100).round()}%",
-                    subtitle: "Today's Score",
-                    icon: Icons.bolt,
-                    iconColor: Colors.amber,
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 32),
+              const SizedBox(height: 28),
 
               const SectionTitle("Recent Tasks"),
-
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
 
               if (recentTasks.isEmpty)
                 Card(
@@ -162,7 +135,7 @@ class HomePage extends ConsumerWidget {
                   ),
                 ),
 
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
             ],
           ),
         ),
