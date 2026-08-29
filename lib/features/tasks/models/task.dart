@@ -52,4 +52,41 @@ class Task {
       dueDate: dueDate ?? this.dueDate,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'priority': priority.name,
+      'category': category.name,
+      'isCompleted': isCompleted,
+      'createdAt': createdAt.toIso8601String(),
+      'dueDate': dueDate?.toIso8601String(),
+    };
+  }
+
+  factory Task.fromJson(Map<String, dynamic> json) {
+    return Task(
+      id: json['id'] as String? ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      title: json['title'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      priority: TaskPriority.values.firstWhere(
+        (e) => e.name == json['priority'],
+        orElse: () => TaskPriority.medium,
+      ),
+      category: TaskCategory.values.firstWhere(
+        (e) => e.name == json['category'],
+        orElse: () => TaskCategory.personal,
+      ),
+      isCompleted: json['isCompleted'] as bool? ?? false,
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now()
+          : DateTime.now(),
+      dueDate: json['dueDate'] != null
+          ? DateTime.tryParse(json['dueDate'] as String)
+          : null,
+    );
+  }
 }
+
