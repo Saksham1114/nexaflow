@@ -1,41 +1,49 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/services/storage_service.dart';
+import '../data/habit_repository_impl.dart';
 import '../models/habit.dart';
+import '../repositories/habit_repository.dart';
+
+final habitRepositoryProvider = Provider<HabitRepository>((ref) {
+  final storage = ref.watch(storageServiceProvider);
+  return HabitRepositoryImpl(storage);
+});
 
 class HabitNotifier extends StateNotifier<List<Habit>> {
-  HabitNotifier()
-    : super([
-        Habit(
-          id: '1',
-          title: 'Workout',
-          frequency: HabitFrequency.daily,
-          completedToday: false,
-          createdAt: DateTime.now(),
-        ),
-        Habit(
-          id: '2',
-          title: 'Read 20 Pages',
-          frequency: HabitFrequency.daily,
-          completedToday: true,
-          createdAt: DateTime.now(),
-        ),
-      ]);
-
-  void toggle(String id) {
-    state = [
-      for (final habit in state)
-        if (habit.id == id)
-          habit.copyWith(completedToday: !habit.completedToday)
-        else
-          habit,
-    ];
+  HabitNotifier(this._repository) : super([]) {
+    loadHabits();
   }
 
-  void add(Habit habit) {
-    state = [habit, ...state];
+  final HabitRepository _repository;
+
+  Future<void> loadHabits() async {
+    state = await _repository.getHabits();
+  }
+
+  Future<void> toggle(String id) async {
+    await _repository.toggleHabit(id);
+    await loadHabits();
+  }
+
+  Future<void> add(Habit habit) async {
+    await _repository.addHabit(habit);
+    await loadHabits();
+  }
+
+  Future<void> delete(String id) async {
+    await _repository.deleteHabit(id);
+    await loadHabits();
+  }
+
+  Future<void> update(Habit habit) async {
+    await _repository.updateHabit(habit);
+    await loadHabits();
   }
 }
 
-final habitProvider = StateNotifierProvider<HabitNotifier, List<Habit>>(
-  (ref) => HabitNotifier(),
-);
+final habitProvider = StateNotifierProvider<HabitNotifier, List<Habit>>((ref) {
+  final repository = ref.watch(habitRepositoryProvider);
+  return HabitNotifier(repository);
+});
+
