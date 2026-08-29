@@ -22,4 +22,23 @@ class AppSettings {
       dailyGoal: dailyGoal ?? this.dailyGoal,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'theme': theme.name,
+      'notificationsEnabled': notificationsEnabled,
+      'dailyGoal': dailyGoal,
+    };
+  }
+
+  factory AppSettings.fromJson(Map<String, dynamic> json) {
+    return AppSettings(
+      theme: ThemeModeOption.values.firstWhere(
+        (e) => e.name == json['theme'],
+        orElse: () => ThemeModeOption.system,
+      ),
+      notificationsEnabled: json['notificationsEnabled'] as bool? ?? true,
+      dailyGoal: json['dailyGoal'] as int? ?? 3000,
+    );
+  }
 }
