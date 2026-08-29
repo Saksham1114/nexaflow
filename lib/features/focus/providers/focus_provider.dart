@@ -4,9 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/services/storage_service.dart';
 import '../models/focus_session.dart';
+import '../services/focus_notification_service.dart';
 
 class FocusNotifier extends StateNotifier<FocusSession> {
-  FocusNotifier(this._storage)
+  FocusNotifier(this._storage, this._notificationService)
       : super(
           FocusSession(
             duration: const Duration(minutes: 25),
@@ -17,6 +18,7 @@ class FocusNotifier extends StateNotifier<FocusSession> {
         );
 
   final StorageService _storage;
+  final FocusNotificationService _notificationService;
   static const String _storageKey = 'nexaflow_focus_sessions_today';
   static const String _dateKey = 'nexaflow_focus_last_date';
 
@@ -54,6 +56,7 @@ class FocusNotifier extends StateNotifier<FocusSession> {
 
         final newCompleted = state.completedSessions + 1;
         _persistCompletedSessions(newCompleted);
+        _notificationService.notifySessionCompleted(state.duration.inMinutes);
 
         state = state.copyWith(
           isRunning: false,
@@ -100,6 +103,8 @@ class FocusNotifier extends StateNotifier<FocusSession> {
 
 final focusProvider = StateNotifierProvider<FocusNotifier, FocusSession>((ref) {
   final storage = ref.watch(storageServiceProvider);
-  return FocusNotifier(storage);
+  final notificationService = ref.watch(focusNotificationServiceProvider);
+  return FocusNotifier(storage, notificationService);
 });
+
 
