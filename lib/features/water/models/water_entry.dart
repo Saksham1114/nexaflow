@@ -16,4 +16,23 @@ class WaterEntry {
       time: time ?? this.time,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'amount': amount,
+      'time': time.toIso8601String(),
+    };
+  }
+
+  factory WaterEntry.fromJson(Map<String, dynamic> json) {
+    return WaterEntry(
+      id: json['id'] as String? ??
+          DateTime.now().millisecondsSinceEpoch.toString(),
+      amount: json['amount'] as int? ?? 0,
+      time: json['time'] != null
+          ? DateTime.tryParse(json['time'] as String) ?? DateTime.now()
+          : DateTime.now(),
+    );
+  }
 }
