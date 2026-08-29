@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/providers/streak_provider.dart';
 import '../../focus/providers/focus_statistics_provider.dart';
 import '../../habits/providers/habit_provider.dart';
 import '../../settings/providers/settings_provider.dart';
@@ -15,6 +16,7 @@ final dashboardProvider = Provider<DashboardOverview>((ref) {
   final focus = ref.watch(focusStatisticsProvider);
   final waterEntries = ref.watch(waterProvider);
   final settings = ref.watch(settingsProvider);
+  final streak = ref.watch(streakProvider);
 
   final completedTasks = tasks.where((t) => t.isCompleted).length;
   final completedHabits = habits.where((h) => h.completedToday).length;
@@ -41,6 +43,8 @@ final dashboardProvider = Provider<DashboardOverview>((ref) {
     waterConsumed: totalWater,
     waterGoal: waterGoal,
     productivity: productivity,
+    currentStreak: streak.currentStreak,
+    bestStreak: streak.bestStreak,
   );
 });
 

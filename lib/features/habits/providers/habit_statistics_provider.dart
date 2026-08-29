@@ -1,17 +1,20 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'habit_provider.dart';
+import '../../../core/providers/streak_provider.dart';
 import '../models/habit_statistics.dart';
+import 'habit_provider.dart';
 
 final habitStatisticsProvider = Provider<HabitStatistics>((ref) {
   final habits = ref.watch(habitProvider);
+  final streak = ref.watch(streakProvider);
 
   final completed = habits.where((e) => e.completedToday).length;
 
   return HabitStatistics(
-    currentStreak: 7,
-    bestStreak: 15,
+    currentStreak: streak.currentStreak,
+    bestStreak: streak.bestStreak,
     completedToday: completed,
     totalHabits: habits.length,
   );
 });
+

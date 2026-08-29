@@ -8,6 +8,8 @@ class DashboardOverview {
     required this.waterConsumed,
     required this.waterGoal,
     required this.productivity,
+    this.currentStreak = 0,
+    this.bestStreak = 0,
   });
 
   final int completedTasks;
@@ -22,6 +24,8 @@ class DashboardOverview {
   final int waterGoal;
 
   final double productivity;
+  final int currentStreak;
+  final int bestStreak;
 
   int get pendingTasks => totalTasks - completedTasks;
   int get totalWater => waterConsumed;

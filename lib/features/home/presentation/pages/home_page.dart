@@ -11,6 +11,7 @@ import '../widgets/recent_task_tile.dart';
 import '../widgets/streak_card.dart';
 import '../../providers/daily_briefing_provider.dart';
 import '../widgets/ai_briefing_card.dart';
+import 'package:nexaflow/core/providers/streak_provider.dart';
 import 'package:nexaflow/features/dashboard/presentation/widgets/dashboard_overview_card.dart';
 import 'package:nexaflow/features/dashboard/providers/dashboard_overview_provider.dart';
 
@@ -22,6 +23,7 @@ class HomePage extends ConsumerWidget {
     final tasks = ref.watch(taskProvider);
     final overview = ref.watch(dashboardOverviewProvider);
     final briefing = ref.watch(dailyBriefingProvider);
+    final streak = ref.watch(streakProvider);
 
     final recentTasks = tasks
         .where((task) => !task.isCompleted)
@@ -38,7 +40,7 @@ class HomePage extends ConsumerWidget {
               const GreetingHeader(),
               const SizedBox(height: 16),
 
-              const StreakCard(currentStreak: 5),
+              StreakCard(streak: streak),
               const SizedBox(height: 16),
 
               AIBriefingCard(
