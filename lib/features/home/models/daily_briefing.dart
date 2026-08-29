@@ -1,11 +1,2 @@
-class DailyBriefing {
-  const DailyBriefing({
-    required this.greeting,
-    required this.summary,
-    required this.recommendation,
-  });
+export '../../ai/models/daily_briefing.dart';
 
-  final String greeting;
-  final String summary;
-  final String recommendation;
-}
