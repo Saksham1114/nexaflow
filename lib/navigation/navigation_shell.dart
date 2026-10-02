@@ -20,6 +20,8 @@ class AppNavigationShell extends StatelessWidget {
       bottomNavigationBar: NavigationBar(
         selectedIndex: navigationShell.currentIndex,
         onDestinationSelected: _onTap,
+        labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+        height: 65,
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.home_outlined),

@@ -4,12 +4,12 @@ import '../../../core/services/storage_service.dart';
 import '../models/water_entry.dart';
 
 class WaterNotifier extends StateNotifier<List<WaterEntry>> {
-  WaterNotifier(this._storage) : super(_loadFromStorage(_storage));
+  WaterNotifier(this._storage) : super(_loadToday(_storage));
 
   final StorageService _storage;
   static const String _storageKey = 'nexaflow_water_entries';
 
-  static List<WaterEntry> _loadFromStorage(StorageService storage) {
+  static List<WaterEntry> _loadToday(StorageService storage) {
     final rawList = storage.getJsonList(_storageKey);
     if (rawList == null || rawList.isEmpty) return const [];
 
@@ -24,7 +24,18 @@ class WaterNotifier extends StateNotifier<List<WaterEntry>> {
   }
 
   void _persist() {
-    _storage.setJsonList(_storageKey, state.map((e) => e.toJson()).toList());
+    final rawList = _storage.getJsonList(_storageKey) ?? [];
+    final allHistorical = rawList
+        .map((e) => WaterEntry.fromJson(e))
+        .where((e) {
+          final now = DateTime.now();
+          return !(e.time.year == now.year &&
+              e.time.month == now.month &&
+              e.time.day == now.day);
+        })
+        .toList();
+    final combined = [...state, ...allHistorical];
+    _storage.setJsonList(_storageKey, combined.map((e) => e.toJson()).toList());
   }
 
   void addWater(int ml) {
@@ -53,4 +64,3 @@ final waterProvider = StateNotifierProvider<WaterNotifier, List<WaterEntry>>((re
   final storage = ref.watch(storageServiceProvider);
   return WaterNotifier(storage);
 });
-

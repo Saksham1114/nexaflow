@@ -19,7 +19,8 @@ class FocusNotifier extends StateNotifier<FocusSession> {
 
   final StorageService _storage;
   final FocusNotificationService _notificationService;
-  static const String _storageKey = 'nexaflow_focus_sessions_today';
+  static const String _storageKeySessions = 'nexaflow_focus_sessions_today';
+  static const String _storageKeyMinutes = 'nexaflow_focus_minutes_today';
   static const String _dateKey = 'nexaflow_focus_last_date';
 
   static int _loadCompletedSessions(StorageService storage) {
@@ -28,19 +29,34 @@ class FocusNotifier extends StateNotifier<FocusSession> {
     final todayStr = '${now.year}-${now.month}-${now.day}';
 
     if (lastDateStr == todayStr) {
-      return storage.getInt(_storageKey) ?? 0;
+      return storage.getInt(_storageKeySessions) ?? 0;
     } else {
       storage.setString(_dateKey, todayStr);
-      storage.setInt(_storageKey, 0);
+      storage.setInt(_storageKeySessions, 0);
+      storage.setInt(_storageKeyMinutes, 0);
       return 0;
     }
   }
 
-  void _persistCompletedSessions(int count) {
+  int get completedMinutesToday {
+    final lastDateStr = _storage.getString(_dateKey);
+    final now = DateTime.now();
+    final todayStr = '${now.year}-${now.month}-${now.day}';
+
+    if (lastDateStr == todayStr) {
+      return _storage.getInt(_storageKeyMinutes) ?? (state.completedSessions * 25);
+    }
+    return 0;
+  }
+
+  void _persistCompletedSessions(int count, int additionalMinutes) {
     final now = DateTime.now();
     final todayStr = '${now.year}-${now.month}-${now.day}';
     _storage.setString(_dateKey, todayStr);
-    _storage.setInt(_storageKey, count);
+    _storage.setInt(_storageKeySessions, count);
+
+    final currentMins = _storage.getInt(_storageKeyMinutes) ?? 0;
+    _storage.setInt(_storageKeyMinutes, currentMins + additionalMinutes);
   }
 
   Timer? _timer;
@@ -55,8 +71,9 @@ class FocusNotifier extends StateNotifier<FocusSession> {
         _timer?.cancel();
 
         final newCompleted = state.completedSessions + 1;
-        _persistCompletedSessions(newCompleted);
-        _notificationService.notifySessionCompleted(state.duration.inMinutes);
+        final finishedDurationMinutes = state.duration.inMinutes;
+        _persistCompletedSessions(newCompleted, finishedDurationMinutes);
+        _notificationService.notifySessionCompleted(finishedDurationMinutes);
 
         state = state.copyWith(
           isRunning: false,
@@ -106,5 +123,3 @@ final focusProvider = StateNotifierProvider<FocusNotifier, FocusSession>((ref) {
   final notificationService = ref.watch(focusNotificationServiceProvider);
   return FocusNotifier(storage, notificationService);
 });
-
-

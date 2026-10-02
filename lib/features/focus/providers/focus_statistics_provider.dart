@@ -5,9 +5,10 @@ import 'focus_provider.dart';
 
 final focusStatisticsProvider = Provider<FocusStatistics>((ref) {
   final session = ref.watch(focusProvider);
+  final notifier = ref.watch(focusProvider.notifier);
 
   return FocusStatistics(
-    totalMinutes: session.completedSessions * session.duration.inMinutes,
+    totalMinutes: notifier.completedMinutesToday,
     sessionsToday: session.completedSessions,
     longestSession: session.duration.inMinutes,
   );
