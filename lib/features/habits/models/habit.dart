@@ -8,6 +8,9 @@ class Habit {
     required this.completedToday,
     required this.createdAt,
     this.lastCompletedDate,
+    this.iconName = 'star',
+    this.colorValue = 0xFF6366F1, // Default Indigo
+    this.reminderTime,
   });
 
   final String id;
@@ -16,6 +19,9 @@ class Habit {
   final bool completedToday;
   final DateTime createdAt;
   final DateTime? lastCompletedDate;
+  final String iconName;
+  final int colorValue;
+  final String? reminderTime; // e.g. "08:30"
 
   Habit copyWith({
     String? id,
@@ -24,6 +30,9 @@ class Habit {
     bool? completedToday,
     DateTime? createdAt,
     DateTime? lastCompletedDate,
+    String? iconName,
+    int? colorValue,
+    String? reminderTime,
   }) {
     return Habit(
       id: id ?? this.id,
@@ -32,6 +41,9 @@ class Habit {
       completedToday: completedToday ?? this.completedToday,
       createdAt: createdAt ?? this.createdAt,
       lastCompletedDate: lastCompletedDate ?? this.lastCompletedDate,
+      iconName: iconName ?? this.iconName,
+      colorValue: colorValue ?? this.colorValue,
+      reminderTime: reminderTime ?? this.reminderTime,
     );
   }
 
@@ -43,6 +55,9 @@ class Habit {
       'completedToday': completedToday,
       'createdAt': createdAt.toIso8601String(),
       'lastCompletedDate': lastCompletedDate?.toIso8601String(),
+      'iconName': iconName,
+      'colorValue': colorValue,
+      'reminderTime': reminderTime,
     };
   }
 
@@ -73,6 +88,9 @@ class Habit {
           ? DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now()
           : DateTime.now(),
       lastCompletedDate: lastCompleted,
+      iconName: json['iconName'] as String? ?? 'star',
+      colorValue: json['colorValue'] as int? ?? 0xFF6366F1,
+      reminderTime: json['reminderTime'] as String?,
     );
   }
 }
