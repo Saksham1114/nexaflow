@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 class AchievementBadge {
   const AchievementBadge({
@@ -28,6 +28,7 @@ class UserProfile {
   const UserProfile({
     required this.name,
     required this.avatarIndex,
+    this.avatarImagePath,
     required this.totalTasksCompleted,
     required this.totalHabitsCompleted,
     required this.totalFocusMinutes,
@@ -39,6 +40,7 @@ class UserProfile {
 
   final String name;
   final int avatarIndex;
+  final String? avatarImagePath;
   final int totalTasksCompleted;
   final int totalHabitsCompleted;
   final int totalFocusMinutes;
@@ -46,6 +48,7 @@ class UserProfile {
   final int currentStreak;
   final int bestStreak;
   final int xp;
+
 
   static const int xpPerLevel = 500;
 
@@ -133,6 +136,8 @@ class UserProfile {
   UserProfile copyWith({
     String? name,
     int? avatarIndex,
+    String? avatarImagePath,
+    bool clearImagePath = false,
     int? totalTasksCompleted,
     int? totalHabitsCompleted,
     int? totalFocusMinutes,
@@ -144,6 +149,7 @@ class UserProfile {
     return UserProfile(
       name: name ?? this.name,
       avatarIndex: avatarIndex ?? this.avatarIndex,
+      avatarImagePath: clearImagePath ? null : (avatarImagePath ?? this.avatarImagePath),
       totalTasksCompleted: totalTasksCompleted ?? this.totalTasksCompleted,
       totalHabitsCompleted: totalHabitsCompleted ?? this.totalHabitsCompleted,
       totalFocusMinutes: totalFocusMinutes ?? this.totalFocusMinutes,
@@ -154,3 +160,4 @@ class UserProfile {
     );
   }
 }
+

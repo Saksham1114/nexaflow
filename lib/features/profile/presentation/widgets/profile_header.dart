@@ -1,5 +1,8 @@
-﻿import 'package:flutter/material.dart';
+import 'dart:io';
+
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../models/user_profile.dart';
 import '../../providers/profile_provider.dart';
@@ -63,27 +66,88 @@ class ProfileHeader extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Choose Avatar Icon",
+              "Profile Photo & Avatar",
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
             ),
             const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: FilledButton.tonalIcon(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                      ref
+                          .read(profileMetadataProvider.notifier)
+                          .pickImage(ImageSource.camera);
+                    },
+                    icon: const Icon(Icons.camera_alt_outlined),
+                    label: const Text("Camera"),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: FilledButton.tonalIcon(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                      ref
+                          .read(profileMetadataProvider.notifier)
+                          .pickImage(ImageSource.gallery);
+                    },
+                    icon: const Icon(Icons.photo_library_outlined),
+                    label: const Text("Gallery"),
+                  ),
+                ),
+              ],
+            ),
+            if (profile.avatarImagePath != null) ...[
+              const SizedBox(height: 8),
+              SizedBox(
+                width: double.infinity,
+                child: TextButton.icon(
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                    ref
+                        .read(profileMetadataProvider.notifier)
+                        .removeProfileImage();
+                  },
+                  icon: const Icon(Icons.delete_outline, color: Colors.red),
+                  label: const Text(
+                    "Remove Photo",
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              ),
+            ],
+            const SizedBox(height: 16),
+            const Divider(),
+            const SizedBox(height: 8),
+            Text(
+              "Or choose an icon",
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 12),
             Wrap(
               spacing: 16,
               runSpacing: 16,
               children: List.generate(avatarIcons.length, (index) {
-                final isSelected = profile.avatarIndex == index;
+                final isSelected = profile.avatarImagePath == null &&
+                    profile.avatarIndex == index;
                 final theme = Theme.of(context);
 
                 return InkWell(
                   onTap: () {
-                    ref.read(profileMetadataProvider.notifier).updateAvatar(index);
+                    ref
+                        .read(profileMetadataProvider.notifier)
+                        .updateAvatar(index);
                     Navigator.of(ctx).pop();
                   },
                   borderRadius: BorderRadius.circular(16),
                   child: Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? theme.colorScheme.primary.withAlpha(40)
@@ -98,7 +162,7 @@ class ProfileHeader extends ConsumerWidget {
                     ),
                     child: Icon(
                       avatarIcons[index],
-                      size: 32,
+                      size: 28,
                       color: isSelected
                           ? theme.colorScheme.primary
                           : theme.colorScheme.onSurface,
@@ -118,6 +182,8 @@ class ProfileHeader extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final avatarIcon = avatarIcons[profile.avatarIndex.clamp(0, avatarIcons.length - 1)];
+    final hasCustomPhoto = profile.avatarImagePath != null &&
+        File(profile.avatarImagePath!).existsSync();
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -147,23 +213,38 @@ class ProfileHeader extends ConsumerWidget {
                       width: 68,
                       height: 68,
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            theme.colorScheme.primary,
-                            theme.colorScheme.secondary,
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        gradient: !hasCustomPhoto
+                            ? LinearGradient(
+                                colors: [
+                                  theme.colorScheme.primary,
+                                  theme.colorScheme.secondary,
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              )
+                            : null,
                         shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Icon(
-                          avatarIcon,
-                          color: Colors.white,
-                          size: 36,
+                        border: Border.all(
+                          color: theme.colorScheme.primary.withAlpha(50),
+                          width: 2,
                         ),
                       ),
+                      child: hasCustomPhoto
+                          ? ClipOval(
+                              child: Image.file(
+                                File(profile.avatarImagePath!),
+                                width: 68,
+                                height: 68,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : Center(
+                              child: Icon(
+                                avatarIcon,
+                                color: Colors.white,
+                                size: 36,
+                              ),
+                            ),
                     ),
                     Positioned(
                       bottom: -4,
@@ -188,6 +269,7 @@ class ProfileHeader extends ConsumerWidget {
                   ],
                 ),
               ),
+
 
               const SizedBox(width: 16),
 

@@ -1,4 +1,5 @@
-﻿import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../core/providers/streak_provider.dart';
 import '../../../core/services/storage_service.dart';
@@ -12,18 +13,24 @@ class ProfileMetadata {
   const ProfileMetadata({
     required this.name,
     required this.avatarIndex,
+    this.avatarImagePath,
   });
 
   final String name;
   final int avatarIndex;
+  final String? avatarImagePath;
 
   ProfileMetadata copyWith({
     String? name,
     int? avatarIndex,
+    String? avatarImagePath,
+    bool clearImagePath = false,
   }) {
     return ProfileMetadata(
       name: name ?? this.name,
       avatarIndex: avatarIndex ?? this.avatarIndex,
+      avatarImagePath:
+          clearImagePath ? null : (avatarImagePath ?? this.avatarImagePath),
     );
   }
 }
@@ -32,12 +39,16 @@ class ProfileMetadataNotifier extends StateNotifier<ProfileMetadata> {
   ProfileMetadataNotifier(this._storage)
       : super(
           ProfileMetadata(
-            name: _storage.getString('nexaflow_user_name') ?? 'NexaFlow Champion',
+            name:
+                _storage.getString('nexaflow_user_name') ?? 'NexaFlow Champion',
             avatarIndex: _storage.getInt('nexaflow_user_avatar') ?? 0,
+            avatarImagePath:
+                _storage.getString('nexaflow_user_avatar_image'),
           ),
         );
 
   final StorageService _storage;
+  final ImagePicker _picker = ImagePicker();
 
   Future<void> updateName(String name) async {
     final clean = name.trim();
@@ -48,7 +59,33 @@ class ProfileMetadataNotifier extends StateNotifier<ProfileMetadata> {
 
   Future<void> updateAvatar(int index) async {
     await _storage.setInt('nexaflow_user_avatar', index);
-    state = state.copyWith(avatarIndex: index);
+    // When an avatar icon is selected, clear custom image
+    await _storage.remove('nexaflow_user_avatar_image');
+    state = state.copyWith(avatarIndex: index, clearImagePath: true);
+  }
+
+  Future<void> pickImage(ImageSource source) async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: source,
+        imageQuality: 85,
+        maxWidth: 600,
+        maxHeight: 600,
+      );
+
+      if (pickedFile != null) {
+        await _storage.setString(
+            'nexaflow_user_avatar_image', pickedFile.path);
+        state = state.copyWith(avatarImagePath: pickedFile.path);
+      }
+    } catch (_) {
+      // Handle permission denied or cancellation gracefully
+    }
+  }
+
+  Future<void> removeProfileImage() async {
+    await _storage.remove('nexaflow_user_avatar_image');
+    state = state.copyWith(clearImagePath: true);
   }
 }
 
@@ -83,6 +120,7 @@ final userProfileProvider = Provider<UserProfile>((ref) {
   return UserProfile(
     name: meta.name,
     avatarIndex: meta.avatarIndex,
+    avatarImagePath: meta.avatarImagePath,
     totalTasksCompleted: completedTasks,
     totalHabitsCompleted: completedHabits,
     totalFocusMinutes: focusMinutes,
@@ -92,3 +130,4 @@ final userProfileProvider = Provider<UserProfile>((ref) {
     xp: totalXp,
   );
 });
+
