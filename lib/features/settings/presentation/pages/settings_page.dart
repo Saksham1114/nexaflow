@@ -12,13 +12,61 @@ class SettingsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider);
     final notifier = ref.read(settingsProvider.notifier);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(title: const Text("Settings")),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          Text("Appearance", style: Theme.of(context).textTheme.titleLarge),
+          // App Logo & Branding Banner
+          Center(
+            child: Column(
+              children: [
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF6366F1).withValues(alpha: 0.3),
+                        blurRadius: 16,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.asset(
+                      'assets/icons/app_icon.png',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  "NexaFlow",
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "AI-Powered Personal Productivity OS",
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: isDark ? Colors.white60 : Colors.black54,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 28),
+
+          Text("Appearance", style: theme.textTheme.titleLarge),
 
           const SizedBox(height: 12),
 
@@ -29,10 +77,10 @@ class SettingsPage extends ConsumerWidget {
             trailing: DropdownButton<ThemeModeOption>(
               value: settings.theme,
               underline: const SizedBox.shrink(),
-              items: ThemeModeOption.values.map((theme) {
+              items: ThemeModeOption.values.map((themeOption) {
                 return DropdownMenuItem(
-                  value: theme,
-                  child: Text(theme.name.toUpperCase()),
+                  value: themeOption,
+                  child: Text(themeOption.name.toUpperCase()),
                 );
               }).toList(),
               onChanged: (value) {
@@ -44,7 +92,7 @@ class SettingsPage extends ConsumerWidget {
 
           const SizedBox(height: 24),
 
-          Text("Notifications", style: Theme.of(context).textTheme.titleLarge),
+          Text("Notifications", style: theme.textTheme.titleLarge),
 
           const SizedBox(height: 12),
 
@@ -61,7 +109,7 @@ class SettingsPage extends ConsumerWidget {
 
           Text(
             "Daily Water Goal",
-            style: Theme.of(context).textTheme.titleLarge,
+            style: theme.textTheme.titleLarge,
           ),
 
           const SizedBox(height: 12),
@@ -73,7 +121,7 @@ class SettingsPage extends ConsumerWidget {
                 children: [
                   Text(
                     "${settings.dailyGoal} ml",
-                    style: Theme.of(context).textTheme.headlineSmall,
+                    style: theme.textTheme.headlineSmall,
                   ),
                   Slider(
                     value: settings.dailyGoal.toDouble(),
@@ -92,14 +140,14 @@ class SettingsPage extends ConsumerWidget {
 
           const SizedBox(height: 30),
 
-          Text("About", style: Theme.of(context).textTheme.titleLarge),
+          Text("About", style: theme.textTheme.titleLarge),
 
           const SizedBox(height: 12),
 
           const SettingsTile(
             icon: Icons.info_outline,
             title: "Version",
-            subtitle: "1.0.0",
+            subtitle: "1.0.0 (Build 1)",
           ),
 
           const SettingsTile(
