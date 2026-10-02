@@ -1,6 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-class GreetingHeader extends StatelessWidget {
+import '../../../profile/providers/profile_provider.dart';
+
+class GreetingHeader extends ConsumerWidget {
   const GreetingHeader({super.key});
 
   String _greeting() {
@@ -13,8 +18,9 @@ class GreetingHeader extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final profile = ref.watch(userProfileProvider);
 
     return Row(
       children: [
@@ -22,23 +28,48 @@ class GreetingHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("${_greeting()} 👋", style: theme.textTheme.headlineMedium),
+              Text(
+                "${_greeting()}, ${profile.name} 👋",
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: -0.5,
+                ),
+              ),
               const SizedBox(height: 6),
               Text(
-                "Let's make today productive",
-                style: theme.textTheme.bodyMedium,
+                "SakshOS is active • Level ${profile.level} ${profile.rankTitle.split(' ').last}",
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           ),
         ),
-        Container(
-          height: 52,
-          width: 52,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary.withValues(alpha: .15),
-            borderRadius: BorderRadius.circular(16),
+        GestureDetector(
+          onTap: () => context.push('/profile'),
+          child: Container(
+            height: 52,
+            width: 52,
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primary.withValues(alpha: .15),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: theme.colorScheme.primary.withValues(alpha: .3),
+                width: 1.5,
+              ),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: profile.avatarImagePath != null &&
+                      File(profile.avatarImagePath!).existsSync()
+                  ? Image.file(
+                      File(profile.avatarImagePath!),
+                      fit: BoxFit.cover,
+                    )
+                  : const Icon(Icons.person),
+            ),
           ),
-          child: const Icon(Icons.person),
         ),
       ],
     );

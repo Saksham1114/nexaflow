@@ -34,7 +34,7 @@ class AIBriefingCard extends StatelessWidget {
               Icon(Icons.auto_awesome, color: Colors.white),
               SizedBox(width: 10),
               Text(
-                "AI Daily Briefing",
+                "Saksh AI Co-Pilot Briefing",
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,

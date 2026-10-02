@@ -74,7 +74,7 @@ class _AIPageState extends ConsumerState<AIPage> {
               ),
             ),
             const SizedBox(width: 10),
-            const Text("Nexa AI Copilot"),
+            const Text("Saksh AI Companion"),
           ],
         ),
         actions: [
@@ -149,7 +149,7 @@ class _AIPageState extends ConsumerState<AIPage> {
                       textInputAction: TextInputAction.send,
                       onSubmitted: _sendMessage,
                       decoration: InputDecoration(
-                        hintText: "Ask Nexa AI anything...",
+                        hintText: "Ask Saksh AI anything...",
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 12,

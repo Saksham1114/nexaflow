@@ -25,7 +25,7 @@ class NexaFlowApp extends ConsumerWidget {
     final settings = ref.watch(settingsProvider);
 
     return MaterialApp.router(
-      title: 'NexaFlow',
+      title: 'SakshOS',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,

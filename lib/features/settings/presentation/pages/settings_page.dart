@@ -47,7 +47,7 @@ class SettingsPage extends ConsumerWidget {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  "NexaFlow",
+                  "SakshOS",
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     letterSpacing: -0.5,
@@ -55,7 +55,7 @@ class SettingsPage extends ConsumerWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  "AI-Powered Personal Productivity OS",
+                  "Saksham's Personal AI Companion & Productivity OS",
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: isDark ? Colors.white60 : Colors.black54,
                   ),
@@ -153,7 +153,7 @@ class SettingsPage extends ConsumerWidget {
           const SettingsTile(
             icon: Icons.code,
             title: "Built with Flutter",
-            subtitle: "NexaFlow AI Productivity OS",
+            subtitle: "SakshOS AI Companion & Productivity OS",
           ),
         ],
       ),
