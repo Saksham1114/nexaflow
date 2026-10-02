@@ -12,16 +12,39 @@ class FocusProgressRing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return SizedBox(
-      width: 260,
-      height: 260,
+      width: 240,
+      height: 240,
       child: Stack(
         alignment: Alignment.center,
         children: [
+          // Background track
           SizedBox(
-            width: 260,
-            height: 260,
-            child: CircularProgressIndicator(value: progress, strokeWidth: 10),
+            width: 240,
+            height: 240,
+            child: CircularProgressIndicator(
+              value: 1.0,
+              strokeWidth: 10,
+              strokeCap: StrokeCap.round,
+              valueColor: AlwaysStoppedAnimation(
+                theme.colorScheme.surfaceContainerHighest,
+              ),
+            ),
+          ),
+          // Active progress
+          SizedBox(
+            width: 240,
+            height: 240,
+            child: CircularProgressIndicator(
+              value: progress.clamp(0.0, 1.0),
+              strokeWidth: 10,
+              strokeCap: StrokeCap.round,
+              valueColor: AlwaysStoppedAnimation(
+                theme.colorScheme.primary,
+              ),
+            ),
           ),
           child,
         ],
@@ -29,3 +52,4 @@ class FocusProgressRing extends StatelessWidget {
     );
   }
 }
+

@@ -16,21 +16,51 @@ class FocusControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        // Reset Button
+        IconButton.outlined(
+          onPressed: onReset,
+          icon: const Icon(Icons.replay_rounded),
+          tooltip: "Reset Timer",
+          style: IconButton.styleFrom(
+            padding: const EdgeInsets.all(16),
+            side: BorderSide(color: theme.dividerColor.withAlpha(50)),
+          ),
+        ),
+
+        const SizedBox(width: 24),
+
+        // Big Primary Play / Pause Button
         FilledButton.icon(
           onPressed: isRunning ? onPause : onStart,
-          icon: Icon(isRunning ? Icons.pause : Icons.play_arrow),
-          label: Text(isRunning ? "Pause" : "Start"),
-        ),
-        const SizedBox(width: 16),
-        OutlinedButton.icon(
-          onPressed: onReset,
-          icon: const Icon(Icons.refresh),
-          label: const Text("Reset"),
+          icon: Icon(
+            isRunning ? Icons.pause_rounded : Icons.play_arrow_rounded,
+            size: 28,
+          ),
+          label: Text(
+            isRunning ? "PAUSE" : "START FOCUS",
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0.5,
+            ),
+          ),
+          style: FilledButton.styleFrom(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 32,
+              vertical: 18,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+          ),
         ),
       ],
     );
   }
 }
+
