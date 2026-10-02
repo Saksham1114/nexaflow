@@ -38,7 +38,12 @@ class TaskNotifier extends StateNotifier<List<Task>> {
   }
 
   Future<void> toggle(Task task) async {
-    final updated = task.copyWith(isCompleted: !task.isCompleted);
+    final willBeCompleted = !task.isCompleted;
+    final updated = task.copyWith(
+      isCompleted: willBeCompleted,
+      completedAt: willBeCompleted ? DateTime.now() : null,
+      clearCompletedAt: !willBeCompleted,
+    );
     await update(updated);
   }
 }
@@ -52,4 +57,3 @@ final taskProvider = StateNotifierProvider<TaskNotifier, List<Task>>((ref) {
 
   return notifier;
 });
-

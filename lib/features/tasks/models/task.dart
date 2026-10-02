@@ -12,6 +12,7 @@ class Task {
     required this.isCompleted,
     required this.createdAt,
     this.dueDate,
+    this.completedAt,
   });
 
   final String id;
@@ -22,6 +23,7 @@ class Task {
   final bool isCompleted;
   final DateTime createdAt;
   final DateTime? dueDate;
+  final DateTime? completedAt;
 
   bool get hasDueDate => dueDate != null;
 
@@ -40,6 +42,8 @@ class Task {
     bool? isCompleted,
     DateTime? createdAt,
     DateTime? dueDate,
+    DateTime? completedAt,
+    bool clearCompletedAt = false,
   }) {
     return Task(
       id: id ?? this.id,
@@ -50,6 +54,7 @@ class Task {
       isCompleted: isCompleted ?? this.isCompleted,
       createdAt: createdAt ?? this.createdAt,
       dueDate: dueDate ?? this.dueDate,
+      completedAt: clearCompletedAt ? null : (completedAt ?? this.completedAt),
     );
   }
 
@@ -63,6 +68,7 @@ class Task {
       'isCompleted': isCompleted,
       'createdAt': createdAt.toIso8601String(),
       'dueDate': dueDate?.toIso8601String(),
+      'completedAt': completedAt?.toIso8601String(),
     };
   }
 
@@ -86,7 +92,9 @@ class Task {
       dueDate: json['dueDate'] != null
           ? DateTime.tryParse(json['dueDate'] as String)
           : null,
+      completedAt: json['completedAt'] != null
+          ? DateTime.tryParse(json['completedAt'] as String)
+          : null,
     );
   }
 }
-

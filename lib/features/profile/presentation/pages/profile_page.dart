@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../providers/profile_provider.dart';
 import '../widgets/achievement_badge_card.dart';
 import '../widgets/level_info_sheet.dart';
+import '../widgets/productivity_heatmap_card.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/stats_overview_card.dart';
 
@@ -18,7 +19,10 @@ class ProfilePage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Profile & Level"),
+        title: const Text(
+          "Personal Command Center",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.stars_rounded),
@@ -47,15 +51,20 @@ class ProfilePage extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // User Profile & Level Card
+              // User Profile & Level Card with Camera/Gallery Avatar
               ProfileHeader(profile: profile),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
+
+              // GitHub-Style 24-Week Productivity Heatmap
+              const ProductivityHeatmapCard(),
+
+              const SizedBox(height: 20),
 
               // All-Time Productivity Statistics
               StatsOverviewCard(profile: profile),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
               // Unlocked / In-Progress Achievement Badges
               AchievementBadgeCard(profile: profile),
@@ -102,7 +111,7 @@ class ProfilePage extends ConsumerWidget {
                 ],
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 30),
             ],
           ),
         ),
@@ -110,4 +119,3 @@ class ProfilePage extends ConsumerWidget {
     );
   }
 }
-
